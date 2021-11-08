@@ -1,7 +1,7 @@
 public class CarFactory {
 
-    public Car createNewCar() {
+    public Car createNewCar(String color) {
 
-        return new Car();
+        return new Car(color);
     }
 }
