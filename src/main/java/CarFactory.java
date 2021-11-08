@@ -7,7 +7,8 @@ public class CarFactory {
     }
 
     public Car createNewCar(String color) {
+        VehicleRegistrationNumberGenerator vehicleRegistrationNumberGenerator = new VehicleRegistrationNumberGenerator();
 
-        return new Car(color, brand);
+        return new Car(color, brand, vehicleRegistrationNumberGenerator.nextVehicleRegistrationNumber());
     }
 }

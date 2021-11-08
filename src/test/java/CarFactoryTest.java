@@ -13,6 +13,7 @@ public class CarFactoryTest {
         assertNotNull(car);
         assertEquals("Red", car.getColor());
         assertEquals("Saab", car.getBrand());
+        assertEquals("ABC123", car.getRegNo());
 
     }
 }
