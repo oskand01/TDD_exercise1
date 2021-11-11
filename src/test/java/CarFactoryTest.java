@@ -1,10 +1,6 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -21,6 +17,8 @@ public class CarFactoryTest {
 
     @Test
     void test_create_car_success() {
+        carFactory.addModel("900", "Bensin", 90, 4);
+
         Car car = carFactory.createNewCar("900", "Red");
 
         assertNotNull(car);
@@ -28,21 +26,15 @@ public class CarFactoryTest {
         assertEquals("ABC123", car.getRegNo());
     }
 
-    @ParameterizedTest
-    @CsvSource({
-            "900,Bensin,90,4",
-            "900 Turbo,Bensin/Turbo,150,4",
-            "93,Bensin,110,4",
-            "93 aero,Bensin/Turbo,190,4",
-            "9-7X,Diesel/Turbo,170,6"
-    })
-    void test_create_car_with_model_success(String model, String engineType, int enginePower, int numberOfPassengers) {
+    @Test
+    void test_create_car_with_model_success() {
 
-        Car car = carFactory.createNewCar(model, "Red");
+        carFactory.addModel("900", "Bensin", 90, 4);
+        Car car = carFactory.createNewCar("900", "Red");
 
         assertNotNull(car);
-        assertEquals(engineType, car.getEngineType());
-        assertEquals(enginePower, car.getEnginePower());
-        assertEquals(numberOfPassengers, car.getNumberOfPassengers());
+        assertEquals("Bensin", car.getEngineType());
+        assertEquals(90, car.getEnginePower());
+        assertEquals(4, car.getNumberOfPassengers());
     }
 }
