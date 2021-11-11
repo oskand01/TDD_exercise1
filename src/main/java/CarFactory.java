@@ -8,8 +8,8 @@ public class CarFactory {
         this.brand = brand;
     }
 
-    public Car createNewCar(String color) {
+    public Car createNewCar(String model, String color) {
 
-        return new Car(color, this.brand, vehicleRegistrationNumberGenerator.getNextRegNo());
+        return new Car(color, this.brand, vehicleRegistrationNumberGenerator.getNextRegNo(),"Bensin", 90, 4);
     }
 }
