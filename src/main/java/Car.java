@@ -1,15 +1,13 @@
 public class Car {
 
     private String color;
-    private String brand;
     private String regNo;
     private String engineType;
     private int enginePower;
     private int numberOfPassengers;
 
-    public Car(String color, String brand, String regNo, String engineType, int enginePower, int numberOfPassengers) {
+    public Car(String color, String regNo, String engineType, int enginePower, int numberOfPassengers) {
         this.color = color;
-        this.brand = brand;
         this.regNo = regNo;
         this.engineType = engineType;
         this.enginePower = enginePower;
@@ -24,13 +22,7 @@ public class Car {
         this.color = color;
     }
 
-    public String getBrand() {
-        return brand;
-    }
 
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
 
     public String getRegNo() {
         return this.regNo;
