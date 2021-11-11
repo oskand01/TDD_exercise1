@@ -37,4 +37,6 @@ public class CarFactoryTest {
         assertEquals(90, car.getEnginePower());
         assertEquals(4, car.getNumberOfPassengers());
     }
+
+
 }

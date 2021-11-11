@@ -14,7 +14,7 @@ public class CarFactory {
 
     public Car createNewCar(String modelAsString, String color) {
         Model model = models.get(modelAsString);
-        if(model==null) throw new RuntimeException("Unknown model " + modelAsString);
+        if (model == null) throw new RuntimeException("Unknown model " + modelAsString);
         return new Car(color, vehicleRegistrationNumberGenerator.getNextRegNo(), model.getEngineType(), model.getEnginePower(), model.getNumberOfPassengers());
     }
 
