@@ -1,7 +1,16 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class VehicleRegistrationNumberGenerator {
 
-    public String nextVehicleRegistrationNumber() {
+    private List<String> regNumbers;
 
-        return "ABC123";
+    public VehicleRegistrationNumberGenerator(List<String> regNumbers) {
+        this.regNumbers = new ArrayList<>(regNumbers);
+    }
+
+    public String getNextRegNo() {
+
+        return regNumbers.remove(0);
     }
 }
