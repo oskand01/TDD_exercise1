@@ -14,7 +14,7 @@ public class CarFactory {
         this.brand = brand;
     }
 
-    public Car createNewCar(String modelAsString, String color, List<String> equipment) throws MissingModelException {
+    public Car createNewCar(String modelAsString, String color, List<String> equipment, List<String> packages) throws MissingModelException {
         Model model = models.get(modelAsString);
         if (model == null) throw new MissingModelException(modelAsString);
         List<String> allEquipment = new ArrayList<>(equipment);
@@ -22,11 +22,12 @@ public class CarFactory {
 
         return new Car(
                 color,
+                brand,
                 vehicleRegistrationNumberGenerator.getNextRegNo(),
                 model.getEngineType(),
                 model.getEnginePower(),
                 model.getNumberOfPassengers(),
-                allEquipment);
+                allEquipment, packages);
     }
 
     public void addModel(String model, String engineType, int enginePower, int numberOfPassengers, List<String> equipment) {
