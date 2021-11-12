@@ -14,12 +14,12 @@ public class CarFactory {
         this.brand = brand;
     }
 
-    public Car createNewCar(String modelAsString, String color, List<String> equipment) {
+    public Car createNewCar(String modelAsString, String color, List<String> equipment) throws MissingModelException {
         Model model = models.get(modelAsString);
+        if (model == null) throw new MissingModelException(modelAsString);
         List<String> allEquipment = new ArrayList<>(equipment);
         allEquipment.addAll(model.getEquipment());
 
-        if (model == null) throw new RuntimeException("Unknown model " + modelAsString);
         return new Car(
                 color,
                 vehicleRegistrationNumberGenerator.getNextRegNo(),
@@ -51,7 +51,6 @@ public class CarFactory {
         public List<String> getEquipment() {
             return equipment;
         }
-
 
         public String getModel() {
             return model;
