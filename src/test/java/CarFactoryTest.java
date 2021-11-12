@@ -1,25 +1,25 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CarFactoryTest {
 
-    VehicleRegistrationNumberGenerator vehicleRegistrationNumberGenerator;
     CarFactory carFactory;
 
     @BeforeEach
     void setUp() {
-        vehicleRegistrationNumberGenerator = new VehicleRegistrationNumberGenerator(List.of("ABC123"));
+        VehicleRegistrationNumberGenerator vehicleRegistrationNumberGenerator = new VehicleRegistrationNumberGenerator(List.of("ABC123"));
         carFactory = new CarFactory(vehicleRegistrationNumberGenerator, "Saab");
+        carFactory.addModel("900", "Bensin", 90, 4);
     }
 
     @Test
     void test_create_car_success() {
-        carFactory.addModel("900", "Bensin", 90, 4);
-
-        Car car = carFactory.createNewCar("900", "Red");
+        Car car = carFactory.createNewCar("900", "Red", List.of());
 
         assertNotNull(car);
         assertEquals("Red", car.getColor());
@@ -28,14 +28,20 @@ public class CarFactoryTest {
 
     @Test
     void test_create_car_with_model_success() {
-
-        carFactory.addModel("900", "Bensin", 90, 4);
-        Car car = carFactory.createNewCar("900", "Red");
+        Car car = carFactory.createNewCar("900", "Red", List.of());
 
         assertNotNull(car);
         assertEquals("Bensin", car.getEngineType());
         assertEquals(90, car.getEnginePower());
         assertEquals(4, car.getNumberOfPassengers());
+    }
+
+    @Test
+    void test_create_car_with_equipment_success() {
+        Car car = carFactory.createNewCar("900", "Red", List.of("Xenonljus", "Lättmetallfälgar 24\"", "Stolsvärme bak"));
+
+        assertNotNull(car);
+        assertEquals(List.of("Xenonljus", "Lättmetallfälgar 24\"", "Stolsvärme bak"), car.getEquipment());
     }
 
 
