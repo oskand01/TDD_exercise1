@@ -8,17 +8,20 @@ public class CarFactory {
     private VehicleRegistrationNumberGenerator vehicleRegistrationNumberGenerator;
     private String brand;
     private Map<String, Model> models = new HashMap<>();
+    private Map<String, CarPackage> carPackages = new HashMap<>();
 
     public CarFactory(VehicleRegistrationNumberGenerator vehicleRegistrationNumberGenerator, String brand) {
         this.vehicleRegistrationNumberGenerator = vehicleRegistrationNumberGenerator;
         this.brand = brand;
     }
 
-    public Car createNewCar(String modelAsString, String color, List<String> equipment, List<String> packages) throws MissingModelException {
+    public Car createNewCar(String modelAsString, String color, List<String> equipment, List<String> packages) throws MissingModelException, MissingPackageException {
         Model model = models.get(modelAsString);
         if (model == null) throw new MissingModelException(modelAsString);
         List<String> allEquipment = new ArrayList<>(equipment);
         allEquipment.addAll(model.getEquipment());
+
+        appendPackageEquipment(modelAsString, packages, allEquipment);
 
         return new Car(
                 color,
@@ -30,8 +33,22 @@ public class CarFactory {
                 allEquipment, packages);
     }
 
+    private void appendPackageEquipment(String modelAsString, List<String> packages, List<String> allEquipment) throws MissingPackageException {
+        for (String carPackageName : packages) {
+            CarPackage carPackage = carPackages.get(carPackageName);
+            if (carPackage == null) {
+                throw new MissingPackageException(modelAsString);
+            }
+            allEquipment.addAll(carPackage.getEquipment());
+        }
+    }
+
     public void addModel(String model, String engineType, int enginePower, int numberOfPassengers, List<String> equipment) {
         models.put(model, new Model(model, engineType, enginePower, numberOfPassengers, equipment));
+    }
+
+    public void addPackage(String packageName, List<String> equipment) {
+        carPackages.put(packageName, new CarPackage(packageName, equipment));
     }
 
     public static class Model {
@@ -67,6 +84,25 @@ public class CarFactory {
 
         public int getNumberOfPassengers() {
             return numberOfPassengers;
+        }
+    }
+
+    private static class CarPackage {
+        private final String name;
+        private final List<String> equipment;
+
+        public CarPackage(String name, List<String> equipment) {
+
+            this.name = name;
+            this.equipment = equipment;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public List<String> getEquipment() {
+            return equipment;
         }
     }
 }

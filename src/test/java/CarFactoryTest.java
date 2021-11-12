@@ -17,7 +17,7 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_success() throws MissingModelException {
+    void test_create_car_success() throws MissingModelException, MissingPackageException {
         Car car = carFactory.createNewCar("900", "Red", List.of(), List.of());
 
         assertNotNull(car);
@@ -26,7 +26,7 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_with_model_success() throws MissingModelException {
+    void test_create_car_with_model_success() throws MissingModelException, MissingPackageException {
         Car car = carFactory.createNewCar("900", "Red", List.of(), List.of());
 
         assertNotNull(car);
@@ -36,7 +36,7 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_with_equipment_success() throws MissingModelException {
+    void test_create_car_with_equipment_success() throws MissingModelException, MissingPackageException {
         Car car = carFactory.createNewCar("900", "Red", List.of("Xenonljus", "Lättmetallfälgar 24\"", "Stolsvärme bak"), List.of());
 
         assertNotNull(car);
@@ -44,7 +44,7 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_with_model_equipment_success() throws MissingModelException {
+    void test_create_car_with_model_equipment_success() throws MissingModelException, MissingPackageException {
 
         carFactory.addModel("901", "Bensin", 90, 4, List.of("Rattvärme", "Stolsvärme", "Krockkudde"));
 
@@ -63,12 +63,13 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_with_package_success() throws MissingModelException {
+    void test_create_car_with_package_success() throws MissingModelException, MissingPackageException {
+        carFactory.addPackage("Plus", List.of("Elmanövrerade backspeglar", "Taklucka"));
 
-        Car car = carFactory.createNewCar("900", "Red", List.of(""), List.of("Plus"));
+        Car car = carFactory.createNewCar("900", "Red", List.of(), List.of("Plus"));
 
         assertEquals(List.of("Plus"), car.getPackages());
-
-
+        assertEquals(List.of("Elmanövrerade backspeglar", "Taklucka"), car.getEquipment());
     }
+
 }
