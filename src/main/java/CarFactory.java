@@ -7,6 +7,7 @@ public class CarFactory {
     private String brand;
     private Map<String, Model> models = new HashMap<>();
     private Map<String, CarPackage> carPackages = new HashMap<>();
+    private Map<String, Equipment> equipments = new HashMap<>();
 
     public CarFactory(VehicleRegistrationNumberGenerator vehicleRegistrationNumberGenerator, String brand) {
         this.vehicleRegistrationNumberGenerator = vehicleRegistrationNumberGenerator;
@@ -16,7 +17,7 @@ public class CarFactory {
     public Car createNewCar(String modelAsString, String color, List<String> equipment, List<String> packages) throws MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException, IllegalCombinationOfEquipmentException {
         Model model = models.get(modelAsString);
         if (model == null) throw new MissingModelException(modelAsString);
-        if(!model.getCompatiblePackages().containsAll(packages)) {
+        if (!model.getCompatiblePackages().containsAll(packages)) {
             throw new IllegalModelAndPackageCombinationException(String.join(",", packages));
         }
         List<String> allEquipment = new ArrayList<>(equipment);
@@ -24,9 +25,10 @@ public class CarFactory {
 
         appendPackageEquipment(packages, allEquipment);
         List<String> equipmentDuplicates = findDuplicates(allEquipment);
-        if(!equipmentDuplicates.isEmpty()) {
+        if (!equipmentDuplicates.isEmpty()) {
             throw new IllegalCombinationOfEquipmentException(String.join(",", equipmentDuplicates));
         }
+        int equipmentPrice = calculateEquipmentPrice(allEquipment);
 
         return new Car(
                 color,
@@ -35,7 +37,17 @@ public class CarFactory {
                 model.getEngineType(),
                 model.getEnginePower(),
                 model.getNumberOfPassengers(),
-                allEquipment, packages,model.getPrice());
+                allEquipment,
+                packages,
+                model.getPrice() + equipmentPrice);
+    }
+
+    private int calculateEquipmentPrice(List<String> allEquipment) {
+        int equipmentPrice = allEquipment.stream()
+                .map(equ -> equipments.getOrDefault(equ, new Equipment(null, 0)))
+                .mapToInt(Equipment::getPrice)
+                .sum();
+        return equipmentPrice;
     }
 
     private void appendPackageEquipment(List<String> packages, List<String> allEquipment) throws MissingPackageException {
@@ -45,7 +57,7 @@ public class CarFactory {
                 throw new MissingPackageException(carPackageName);
             }
             allEquipment.addAll(carPackage.getEquipment());
-            if(carPackage.getInheritFromPackageName() != null) {
+            if (carPackage.getInheritFromPackageName() != null) {
                 appendPackageEquipment(List.of(carPackage.getInheritFromPackageName()), allEquipment);
 
             }
@@ -61,19 +73,21 @@ public class CarFactory {
         carPackages.put(packageName, new CarPackage(packageName, equipment, inheritFromPackageName));
     }
 
-    public List<String> findDuplicates(List<String> listContainingDuplicates)
-    {
+    public List<String> findDuplicates(List<String> listContainingDuplicates) {
         final Set<String> setToReturn = new HashSet<>();
         final Set<String> set1 = new HashSet<>();
 
-        for (String yourStr : listContainingDuplicates)
-        {
-            if (!set1.add(yourStr))
-            {
+        for (String yourStr : listContainingDuplicates) {
+            if (!set1.add(yourStr)) {
                 setToReturn.add(yourStr);
             }
         }
         return setToReturn.stream().collect(Collectors.toList());
+    }
+
+    public void addEquipment(String equipment, int price) {
+        equipments.put(equipment, new Equipment(equipment, price));
+
     }
 
     public static class Model {
@@ -152,6 +166,24 @@ public class CarFactory {
 
         public List<String> getEquipment() {
             return equipment;
+        }
+    }
+
+    static class Equipment {
+        String name;
+        int price;
+
+        public Equipment(String name, int price) {
+            this.name = name;
+            this.price = price;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getPrice() {
+            return price;
         }
     }
 

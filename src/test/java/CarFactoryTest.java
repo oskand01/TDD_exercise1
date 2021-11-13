@@ -113,7 +113,21 @@ public class CarFactoryTest {
         Car car = carFactory.createNewCar("900", "Red", List.of(), List.of());
 
 
-        assertEquals(100,car.getPrice());
+        assertEquals(100, car.getPrice());
 
     }
+
+    @Test
+    void test_create_car_with_price_with_equipment_success() throws IllegalCombinationOfEquipmentException, MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException {
+        carFactory.addEquipment("lysen", 50);
+
+
+        Car car = carFactory.createNewCar("900", "Red", List.of("lysen"), List.of());
+
+
+        assertEquals(150, car.getPrice());
+
+    }
+
+
 }
