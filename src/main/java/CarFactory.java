@@ -16,17 +16,11 @@ public class CarFactory {
 
     public Car createNewCar(String modelName, String color, List<String> equipment, List<String> packages) throws MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException, IllegalCombinationOfEquipmentException {
         Model model = getModelName(modelName);
+
         model.verifyCompatiblePackages(packages);
 
-        List<String> allEquipment = new ArrayList<>(equipment);
-        allEquipment.addAll(model.getEquipment());
-        int equipmentPrice = calculateEquipmentPrice(allEquipment);
-        appendPackageEquipment(packages, allEquipment);
-
-        List<String> equipmentDuplicates = findDuplicates(allEquipment);
-        if (!equipmentDuplicates.isEmpty()) {
-            throw new IllegalCombinationOfEquipmentException(String.join(",", equipmentDuplicates));
-        }
+        int equipmentPrice = calculateEquipmentPrice(equipment);
+        int modelPrice = calculateEquipmentPrice(model.getEquipment());
         int packagePrice = calculatePackagePrice(packages);
 
         return new Car(
@@ -36,9 +30,22 @@ public class CarFactory {
                 model.getEngineType(),
                 model.getEnginePower(),
                 model.getNumberOfPassengers(),
-                allEquipment,
+                combineEquipmentAndCheckForDuplicates(equipment, packages, model),
                 packages,
-                model.getPrice() + equipmentPrice + packagePrice);
+                model.getPrice() + equipmentPrice + modelPrice + packagePrice);
+    }
+
+    private List<String> combineEquipmentAndCheckForDuplicates(List<String> equipment, List<String> packages, Model model) throws MissingPackageException, IllegalCombinationOfEquipmentException {
+        List<String> allEquipment = new ArrayList<>(equipment);
+        allEquipment.addAll(model.getEquipment());
+        appendPackageEquipment(packages, allEquipment);
+
+        List<String> equipmentDuplicates = findDuplicates(allEquipment);
+        if (!equipmentDuplicates.isEmpty()) {
+            throw new IllegalCombinationOfEquipmentException(String.join(",", equipmentDuplicates));
+        }
+
+        return allEquipment;
     }
 
     private Model getModelName(String modelAsString) throws MissingModelException {
@@ -58,7 +65,7 @@ public class CarFactory {
 
     private int calculatePackagePrice(List<String> allPackages) {
         int packagePrice = allPackages.stream()
-                .map(equ -> carPackages.getOrDefault(equ, new CarPackage(null, List.of(), null,0)))
+                .map(equ -> carPackages.getOrDefault(equ, new CarPackage(null, List.of(), null, 0)))
                 .mapToInt(CarPackage::getPrice)
                 .sum();
         return packagePrice;
@@ -75,7 +82,6 @@ public class CarFactory {
                 appendPackageEquipment(List.of(carPackage.getInheritFromPackageName()), allEquipment);
 
             }
-
         }
     }
 
@@ -178,10 +184,6 @@ public class CarFactory {
             this.price = price;
         }
 
-        public String getName() {
-            return name;
-        }
-
         public String getInheritFromPackageName() {
             return inheritFromPackageName;
         }
@@ -204,14 +206,8 @@ public class CarFactory {
             this.price = price;
         }
 
-        public String getName() {
-            return name;
-        }
-
         public int getPrice() {
             return price;
         }
     }
-
-
 }
