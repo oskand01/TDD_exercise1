@@ -14,16 +14,15 @@ public class CarFactory {
         this.brand = brand;
     }
 
-    public Car createNewCar(String modelAsString, String color, List<String> equipment, List<String> packages) throws MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException, IllegalCombinationOfEquipmentException {
-        Model model = models.get(modelAsString);
-        if (model == null) throw new MissingModelException(modelAsString);
-        if (!model.getCompatiblePackages().containsAll(packages)) {
-            throw new IllegalModelAndPackageCombinationException(String.join(",", packages));
-        }
+    public Car createNewCar(String modelName, String color, List<String> equipment, List<String> packages) throws MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException, IllegalCombinationOfEquipmentException {
+        Model model = getModelName(modelName);
+        model.verifyCompatiblePackages(packages);
+
         List<String> allEquipment = new ArrayList<>(equipment);
         allEquipment.addAll(model.getEquipment());
         int equipmentPrice = calculateEquipmentPrice(allEquipment);
         appendPackageEquipment(packages, allEquipment);
+
         List<String> equipmentDuplicates = findDuplicates(allEquipment);
         if (!equipmentDuplicates.isEmpty()) {
             throw new IllegalCombinationOfEquipmentException(String.join(",", equipmentDuplicates));
@@ -40,6 +39,13 @@ public class CarFactory {
                 allEquipment,
                 packages,
                 model.getPrice() + equipmentPrice + packagePrice);
+    }
+
+    private Model getModelName(String modelAsString) throws MissingModelException {
+        Model model = models.get(modelAsString);
+
+        if (model == null) throw new MissingModelException(modelAsString);
+        return model;
     }
 
     private int calculateEquipmentPrice(List<String> allEquipment) {
@@ -149,6 +155,12 @@ public class CarFactory {
 
         public int getPrice() {
             return price;
+        }
+
+        public void verifyCompatiblePackages(List<String> packages) throws IllegalModelAndPackageCombinationException {
+            if (!getCompatiblePackages().containsAll(packages)) {
+                throw new IllegalModelAndPackageCombinationException(String.join(",", packages));
+            }
         }
     }
 
