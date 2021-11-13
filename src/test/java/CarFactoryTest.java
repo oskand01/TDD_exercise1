@@ -13,11 +13,11 @@ public class CarFactoryTest {
     void setUp() {
         VehicleRegistrationNumberGenerator vehicleRegistrationNumberGenerator = new VehicleRegistrationNumberGenerator(List.of("ABC123"));
         carFactory = new CarFactory(vehicleRegistrationNumberGenerator, "Saab");
-        carFactory.addModel("900", "Bensin", 90, 4, List.of());
+        carFactory.addModel("900", "Bensin", 90, 4, List.of(), List.of("Plus", "Business"));
     }
 
     @Test
-    void test_create_car_success() throws MissingModelException, MissingPackageException {
+    void test_create_car_success() throws MissingModelException, MissingPackageException, IlligalModelAndPackageCombinationException {
         Car car = carFactory.createNewCar("900", "Red", List.of(), List.of());
 
         assertNotNull(car);
@@ -26,7 +26,7 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_with_model_success() throws MissingModelException, MissingPackageException {
+    void test_create_car_with_model_success() throws MissingModelException, MissingPackageException, IlligalModelAndPackageCombinationException {
         Car car = carFactory.createNewCar("900", "Red", List.of(), List.of());
 
         assertNotNull(car);
@@ -36,7 +36,7 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_with_equipment_success() throws MissingModelException, MissingPackageException {
+    void test_create_car_with_equipment_success() throws MissingModelException, MissingPackageException, IlligalModelAndPackageCombinationException {
         Car car = carFactory.createNewCar("900", "Red", List.of("Xenonljus", "Lättmetallfälgar 24\"", "Stolsvärme bak"), List.of());
 
         assertNotNull(car);
@@ -44,9 +44,9 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_with_model_equipment_success() throws MissingModelException, MissingPackageException {
+    void test_create_car_with_model_equipment_success() throws MissingModelException, MissingPackageException, IlligalModelAndPackageCombinationException {
 
-        carFactory.addModel("901", "Bensin", 90, 4, List.of("Rattvärme", "Stolsvärme", "Krockkudde"));
+        carFactory.addModel("901", "Bensin", 90, 4, List.of("Rattvärme", "Stolsvärme", "Krockkudde"), List.of());
 
         Car car = carFactory.createNewCar("901", "Red", List.of("Xenonljus", "Lättmetallfälgar 24\"", "Stolsvärme bak"), List.of());
 
@@ -63,7 +63,7 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_with_package_success() throws MissingModelException, MissingPackageException {
+    void test_create_car_with_package_success() throws MissingModelException, MissingPackageException, IlligalModelAndPackageCombinationException {
         carFactory.addPackage("Plus", List.of("Elmanövrerade backspeglar", "Taklucka"), null);
 
         Car car = carFactory.createNewCar("900", "Red", List.of(), List.of("Plus"));
@@ -73,7 +73,7 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_with_inherited_package_success() throws MissingModelException, MissingPackageException {
+    void test_create_car_with_inherited_package_success() throws MissingModelException, MissingPackageException, IlligalModelAndPackageCombinationException {
         carFactory.addPackage("Plus", List.of("Elmanövrerade backspeglar", "Taklucka"), null);
         carFactory.addPackage("Business", List.of("Bluetooth integration", "Backkamera"), "Plus");
 
@@ -85,6 +85,15 @@ public class CarFactoryTest {
 
     }
 
+    @Test
+    void test_create_car_fail_because_illegal_model_and_package_combination() throws MissingModelException, MissingPackageException {
+        carFactory.addModel("901", "Bensin", 90, 4, List.of(), List.of("Plus"));
+        carFactory.addPackage("Sport", List.of("Sportratt", "Kjolpaket"), null);
 
+        IlligalModelAndPackageCombinationException illigalModelAndPackageCombinationException = assertThrows(IlligalModelAndPackageCombinationException.class, () ->
+                carFactory.createNewCar("901", "Red", List.of(), List.of("Sport")));
 
+        assertEquals("Sport", illigalModelAndPackageCombinationException.getMessage());
+
+    }
 }

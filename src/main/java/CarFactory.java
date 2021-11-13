@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CarFactory {
 
@@ -15,9 +16,12 @@ public class CarFactory {
         this.brand = brand;
     }
 
-    public Car createNewCar(String modelAsString, String color, List<String> equipment, List<String> packages) throws MissingModelException, MissingPackageException {
+    public Car createNewCar(String modelAsString, String color, List<String> equipment, List<String> packages) throws MissingModelException, MissingPackageException, IlligalModelAndPackageCombinationException {
         Model model = models.get(modelAsString);
         if (model == null) throw new MissingModelException(modelAsString);
+        if(!model.getCompatiblePackages().containsAll(packages)) {
+            throw new IlligalModelAndPackageCombinationException(String.join(",", packages));
+        }
         List<String> allEquipment = new ArrayList<>(equipment);
         allEquipment.addAll(model.getEquipment());
 
@@ -48,8 +52,8 @@ public class CarFactory {
         }
     }
 
-    public void addModel(String model, String engineType, int enginePower, int numberOfPassengers, List<String> equipment) {
-        models.put(model, new Model(model, engineType, enginePower, numberOfPassengers, equipment));
+    public void addModel(String model, String engineType, int enginePower, int numberOfPassengers, List<String> equipment, List<String> compatiblePackages) {
+        models.put(model, new Model(model, engineType, enginePower, numberOfPassengers, equipment, compatiblePackages));
     }
 
     public void addPackage(String packageName, List<String> equipment, String inheritFromPackageName) {
@@ -62,13 +66,15 @@ public class CarFactory {
         int enginePower;
         int numberOfPassengers;
         private List<String> equipment;
+        private List<String> compatiblePackages;
 
-        public Model(String model, String engineType, int enginePower, int numberOfPassengers, List<String> equipment) {
+        public Model(String model, String engineType, int enginePower, int numberOfPassengers, List<String> equipment, List<String> compatiblePackages) {
             this.model = model;
             this.engineType = engineType;
             this.enginePower = enginePower;
             this.numberOfPassengers = numberOfPassengers;
             this.equipment = equipment;
+            this.compatiblePackages = compatiblePackages;
         }
 
         public List<String> getEquipment() {
@@ -89,6 +95,10 @@ public class CarFactory {
 
         public int getNumberOfPassengers() {
             return numberOfPassengers;
+        }
+
+        public List<String> getCompatiblePackages() {
+            return compatiblePackages;
         }
     }
 
