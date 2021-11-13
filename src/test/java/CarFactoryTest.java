@@ -17,7 +17,7 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_success() throws MissingModelException, MissingPackageException, IlligalModelAndPackageCombinationException {
+    void test_create_car_success() throws MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException, IllegalCombinationOfEquipmentException {
         Car car = carFactory.createNewCar("900", "Red", List.of(), List.of());
 
         assertNotNull(car);
@@ -26,7 +26,7 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_with_model_success() throws MissingModelException, MissingPackageException, IlligalModelAndPackageCombinationException {
+    void test_create_car_with_model_success() throws MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException, IllegalCombinationOfEquipmentException {
         Car car = carFactory.createNewCar("900", "Red", List.of(), List.of());
 
         assertNotNull(car);
@@ -36,7 +36,7 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_with_equipment_success() throws MissingModelException, MissingPackageException, IlligalModelAndPackageCombinationException {
+    void test_create_car_with_equipment_success() throws MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException, IllegalCombinationOfEquipmentException {
         Car car = carFactory.createNewCar("900", "Red", List.of("Xenonljus", "Lättmetallfälgar 24\"", "Stolsvärme bak"), List.of());
 
         assertNotNull(car);
@@ -44,7 +44,7 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_with_model_equipment_success() throws MissingModelException, MissingPackageException, IlligalModelAndPackageCombinationException {
+    void test_create_car_with_model_equipment_success() throws MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException, IllegalCombinationOfEquipmentException {
 
         carFactory.addModel("901", "Bensin", 90, 4, List.of("Rattvärme", "Stolsvärme", "Krockkudde"), List.of());
 
@@ -63,7 +63,7 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_with_package_success() throws MissingModelException, MissingPackageException, IlligalModelAndPackageCombinationException {
+    void test_create_car_with_package_success() throws MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException, IllegalCombinationOfEquipmentException {
         carFactory.addPackage("Plus", List.of("Elmanövrerade backspeglar", "Taklucka"), null);
 
         Car car = carFactory.createNewCar("900", "Red", List.of(), List.of("Plus"));
@@ -73,7 +73,7 @@ public class CarFactoryTest {
     }
 
     @Test
-    void test_create_car_with_inherited_package_success() throws MissingModelException, MissingPackageException, IlligalModelAndPackageCombinationException {
+    void test_create_car_with_inherited_package_success() throws MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException, IllegalCombinationOfEquipmentException {
         carFactory.addPackage("Plus", List.of("Elmanövrerade backspeglar", "Taklucka"), null);
         carFactory.addPackage("Business", List.of("Bluetooth integration", "Backkamera"), "Plus");
 
@@ -90,10 +90,20 @@ public class CarFactoryTest {
         carFactory.addModel("901", "Bensin", 90, 4, List.of(), List.of("Plus"));
         carFactory.addPackage("Sport", List.of("Sportratt", "Kjolpaket"), null);
 
-        IlligalModelAndPackageCombinationException illigalModelAndPackageCombinationException = assertThrows(IlligalModelAndPackageCombinationException.class, () ->
+        IllegalModelAndPackageCombinationException illegalModelAndPackageCombinationException = assertThrows(IllegalModelAndPackageCombinationException.class, () ->
                 carFactory.createNewCar("901", "Red", List.of(), List.of("Sport")));
 
-        assertEquals("Sport", illigalModelAndPackageCombinationException.getMessage());
+        assertEquals("Sport", illegalModelAndPackageCombinationException.getMessage());
 
+    }
+
+    @Test
+    void test_create_car_fail_because_illegal_combination_of_equipment() throws MissingModelException, MissingPackageException {
+        carFactory.addModel("901", "Bensin", 90, 4, List.of("Lysen"), List.of());
+
+        IllegalCombinationOfEquipmentException illegalCombinationOfEquipmentException = assertThrows(IllegalCombinationOfEquipmentException.class, () ->
+                carFactory.createNewCar("901", "Red", List.of("Lysen"), List.of()));
+
+        assertEquals("Lysen", illegalCombinationOfEquipmentException.getMessage());
     }
 }

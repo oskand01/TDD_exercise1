@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CarFactory {
@@ -16,16 +13,20 @@ public class CarFactory {
         this.brand = brand;
     }
 
-    public Car createNewCar(String modelAsString, String color, List<String> equipment, List<String> packages) throws MissingModelException, MissingPackageException, IlligalModelAndPackageCombinationException {
+    public Car createNewCar(String modelAsString, String color, List<String> equipment, List<String> packages) throws MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException, IllegalCombinationOfEquipmentException {
         Model model = models.get(modelAsString);
         if (model == null) throw new MissingModelException(modelAsString);
         if(!model.getCompatiblePackages().containsAll(packages)) {
-            throw new IlligalModelAndPackageCombinationException(String.join(",", packages));
+            throw new IllegalModelAndPackageCombinationException(String.join(",", packages));
         }
         List<String> allEquipment = new ArrayList<>(equipment);
         allEquipment.addAll(model.getEquipment());
 
         appendPackageEquipment(packages, allEquipment);
+        List<String> equipmentDuplicates = findDuplicates(allEquipment);
+        if(!equipmentDuplicates.isEmpty()) {
+            throw new IllegalCombinationOfEquipmentException(String.join(",", equipmentDuplicates));
+        }
 
         return new Car(
                 color,
@@ -58,6 +59,21 @@ public class CarFactory {
 
     public void addPackage(String packageName, List<String> equipment, String inheritFromPackageName) {
         carPackages.put(packageName, new CarPackage(packageName, equipment, inheritFromPackageName));
+    }
+
+    public List<String> findDuplicates(List<String> listContainingDuplicates)
+    {
+        final Set<String> setToReturn = new HashSet<>();
+        final Set<String> set1 = new HashSet<>();
+
+        for (String yourStr : listContainingDuplicates)
+        {
+            if (!set1.add(yourStr))
+            {
+                setToReturn.add(yourStr);
+            }
+        }
+        return setToReturn.stream().collect(Collectors.toList());
     }
 
     public static class Model {
@@ -126,4 +142,6 @@ public class CarFactory {
             return equipment;
         }
     }
+
+
 }
