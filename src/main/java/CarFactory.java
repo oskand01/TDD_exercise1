@@ -22,13 +22,13 @@ public class CarFactory {
         }
         List<String> allEquipment = new ArrayList<>(equipment);
         allEquipment.addAll(model.getEquipment());
-
+        int equipmentPrice = calculateEquipmentPrice(allEquipment);
         appendPackageEquipment(packages, allEquipment);
         List<String> equipmentDuplicates = findDuplicates(allEquipment);
         if (!equipmentDuplicates.isEmpty()) {
             throw new IllegalCombinationOfEquipmentException(String.join(",", equipmentDuplicates));
         }
-        int equipmentPrice = calculateEquipmentPrice(allEquipment);
+        int packagePrice = calculatePackagePrice(packages);
 
         return new Car(
                 color,
@@ -39,7 +39,7 @@ public class CarFactory {
                 model.getNumberOfPassengers(),
                 allEquipment,
                 packages,
-                model.getPrice() + equipmentPrice);
+                model.getPrice() + equipmentPrice + packagePrice);
     }
 
     private int calculateEquipmentPrice(List<String> allEquipment) {
@@ -48,6 +48,14 @@ public class CarFactory {
                 .mapToInt(Equipment::getPrice)
                 .sum();
         return equipmentPrice;
+    }
+
+    private int calculatePackagePrice(List<String> allPackages) {
+        int packagePrice = allPackages.stream()
+                .map(equ -> carPackages.getOrDefault(equ, new CarPackage(null, List.of(), null,0)))
+                .mapToInt(CarPackage::getPrice)
+                .sum();
+        return packagePrice;
     }
 
     private void appendPackageEquipment(List<String> packages, List<String> allEquipment) throws MissingPackageException {
@@ -69,8 +77,8 @@ public class CarFactory {
         models.put(model, new Model(model, engineType, enginePower, numberOfPassengers, equipment, compatiblePackages, price));
     }
 
-    public void addPackage(String packageName, List<String> equipment, String inheritFromPackageName) {
-        carPackages.put(packageName, new CarPackage(packageName, equipment, inheritFromPackageName));
+    public void addPackage(String packageName, List<String> equipment, String inheritFromPackageName, int price) {
+        carPackages.put(packageName, new CarPackage(packageName, equipment, inheritFromPackageName, price));
     }
 
     public List<String> findDuplicates(List<String> listContainingDuplicates) {
@@ -148,12 +156,14 @@ public class CarFactory {
         private String name;
         private List<String> equipment;
         private String inheritFromPackageName;
+        private int price;
 
-        public CarPackage(String name, List<String> equipment, String inheritFromPackageName) {
+        public CarPackage(String name, List<String> equipment, String inheritFromPackageName, int price) {
 
             this.name = name;
             this.equipment = equipment;
             this.inheritFromPackageName = inheritFromPackageName;
+            this.price = price;
         }
 
         public String getName() {
@@ -166,6 +176,10 @@ public class CarFactory {
 
         public List<String> getEquipment() {
             return equipment;
+        }
+
+        public int getPrice() {
+            return price;
         }
     }
 
