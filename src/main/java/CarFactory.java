@@ -35,7 +35,7 @@ public class CarFactory {
                 model.getEngineType(),
                 model.getEnginePower(),
                 model.getNumberOfPassengers(),
-                allEquipment, packages,100);
+                allEquipment, packages,model.getPrice());
     }
 
     private void appendPackageEquipment(List<String> packages, List<String> allEquipment) throws MissingPackageException {
@@ -53,8 +53,8 @@ public class CarFactory {
         }
     }
 
-    public void addModel(String model, String engineType, int enginePower, int numberOfPassengers, List<String> equipment, List<String> compatiblePackages) {
-        models.put(model, new Model(model, engineType, enginePower, numberOfPassengers, equipment, compatiblePackages));
+    public void addModel(String model, String engineType, int enginePower, int numberOfPassengers, List<String> equipment, List<String> compatiblePackages, int price) {
+        models.put(model, new Model(model, engineType, enginePower, numberOfPassengers, equipment, compatiblePackages, price));
     }
 
     public void addPackage(String packageName, List<String> equipment, String inheritFromPackageName) {
@@ -83,14 +83,22 @@ public class CarFactory {
         int numberOfPassengers;
         private List<String> equipment;
         private List<String> compatiblePackages;
+        private int price;
 
-        public Model(String model, String engineType, int enginePower, int numberOfPassengers, List<String> equipment, List<String> compatiblePackages) {
+        public Model(String model,
+                     String engineType,
+                     int enginePower,
+                     int numberOfPassengers,
+                     List<String> equipment,
+                     List<String> compatiblePackages,
+                     int price) {
             this.model = model;
             this.engineType = engineType;
             this.enginePower = enginePower;
             this.numberOfPassengers = numberOfPassengers;
             this.equipment = equipment;
             this.compatiblePackages = compatiblePackages;
+            this.price = price;
         }
 
         public List<String> getEquipment() {
@@ -115,6 +123,10 @@ public class CarFactory {
 
         public List<String> getCompatiblePackages() {
             return compatiblePackages;
+        }
+
+        public int getPrice() {
+            return price;
         }
     }
 

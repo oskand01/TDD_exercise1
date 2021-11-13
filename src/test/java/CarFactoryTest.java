@@ -13,7 +13,7 @@ public class CarFactoryTest {
     void setUp() {
         VehicleRegistrationNumberGenerator vehicleRegistrationNumberGenerator = new VehicleRegistrationNumberGenerator(List.of("ABC123"));
         carFactory = new CarFactory(vehicleRegistrationNumberGenerator, "Saab");
-        carFactory.addModel("900", "Bensin", 90, 4, List.of(), List.of("Plus", "Business"));
+        carFactory.addModel("900", "Bensin", 90, 4, List.of(), List.of("Plus", "Business"), 100);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class CarFactoryTest {
     @Test
     void test_create_car_with_model_equipment_success() throws MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException, IllegalCombinationOfEquipmentException {
 
-        carFactory.addModel("901", "Bensin", 90, 4, List.of("Rattvärme", "Stolsvärme", "Krockkudde"), List.of());
+        carFactory.addModel("901", "Bensin", 90, 4, List.of("Rattvärme", "Stolsvärme", "Krockkudde"), List.of(), 100);
 
         Car car = carFactory.createNewCar("901", "Red", List.of("Xenonljus", "Lättmetallfälgar 24\"", "Stolsvärme bak"), List.of());
 
@@ -87,7 +87,7 @@ public class CarFactoryTest {
 
     @Test
     void test_create_car_fail_because_illegal_model_and_package_combination() throws MissingModelException, MissingPackageException {
-        carFactory.addModel("901", "Bensin", 90, 4, List.of(), List.of("Plus"));
+        carFactory.addModel("901", "Bensin", 90, 4, List.of(), List.of("Plus"), 100);
         carFactory.addPackage("Sport", List.of("Sportratt", "Kjolpaket"), null);
 
         IllegalModelAndPackageCombinationException illegalModelAndPackageCombinationException = assertThrows(IllegalModelAndPackageCombinationException.class, () ->
@@ -99,7 +99,7 @@ public class CarFactoryTest {
 
     @Test
     void test_create_car_fail_because_illegal_combination_of_equipment() throws MissingModelException, MissingPackageException {
-        carFactory.addModel("901", "Bensin", 90, 4, List.of("Lysen"), List.of());
+        carFactory.addModel("901", "Bensin", 90, 4, List.of("Lysen"), List.of(), 100);
 
         IllegalCombinationOfEquipmentException illegalCombinationOfEquipmentException = assertThrows(IllegalCombinationOfEquipmentException.class, () ->
                 carFactory.createNewCar("901", "Red", List.of("Lysen"), List.of()));
