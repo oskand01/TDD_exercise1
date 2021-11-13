@@ -21,7 +21,7 @@ public class CarFactory {
         List<String> allEquipment = new ArrayList<>(equipment);
         allEquipment.addAll(model.getEquipment());
 
-        appendPackageEquipment(modelAsString, packages, allEquipment);
+        appendPackageEquipment(packages, allEquipment);
 
         return new Car(
                 color,
@@ -33,13 +33,18 @@ public class CarFactory {
                 allEquipment, packages);
     }
 
-    private void appendPackageEquipment(String modelAsString, List<String> packages, List<String> allEquipment) throws MissingPackageException {
+    private void appendPackageEquipment(List<String> packages, List<String> allEquipment) throws MissingPackageException {
         for (String carPackageName : packages) {
             CarPackage carPackage = carPackages.get(carPackageName);
             if (carPackage == null) {
-                throw new MissingPackageException(modelAsString);
+                throw new MissingPackageException(carPackageName);
             }
             allEquipment.addAll(carPackage.getEquipment());
+            if(carPackage.getInheritFromPackageName() != null) {
+                appendPackageEquipment(List.of(carPackage.getInheritFromPackageName()), allEquipment);
+
+            }
+
         }
     }
 
@@ -47,8 +52,8 @@ public class CarFactory {
         models.put(model, new Model(model, engineType, enginePower, numberOfPassengers, equipment));
     }
 
-    public void addPackage(String packageName, List<String> equipment) {
-        carPackages.put(packageName, new CarPackage(packageName, equipment));
+    public void addPackage(String packageName, List<String> equipment, String inheritFromPackageName) {
+        carPackages.put(packageName, new CarPackage(packageName, equipment, inheritFromPackageName));
     }
 
     public static class Model {
@@ -88,17 +93,23 @@ public class CarFactory {
     }
 
     private static class CarPackage {
-        private final String name;
-        private final List<String> equipment;
+        private String name;
+        private List<String> equipment;
+        private String inheritFromPackageName;
 
-        public CarPackage(String name, List<String> equipment) {
+        public CarPackage(String name, List<String> equipment, String inheritFromPackageName) {
 
             this.name = name;
             this.equipment = equipment;
+            this.inheritFromPackageName = inheritFromPackageName;
         }
 
         public String getName() {
             return name;
+        }
+
+        public String getInheritFromPackageName() {
+            return inheritFromPackageName;
         }
 
         public List<String> getEquipment() {

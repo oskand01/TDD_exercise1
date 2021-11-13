@@ -64,12 +64,27 @@ public class CarFactoryTest {
 
     @Test
     void test_create_car_with_package_success() throws MissingModelException, MissingPackageException {
-        carFactory.addPackage("Plus", List.of("Elmanövrerade backspeglar", "Taklucka"));
+        carFactory.addPackage("Plus", List.of("Elmanövrerade backspeglar", "Taklucka"), null);
 
         Car car = carFactory.createNewCar("900", "Red", List.of(), List.of("Plus"));
 
         assertEquals(List.of("Plus"), car.getPackages());
         assertEquals(List.of("Elmanövrerade backspeglar", "Taklucka"), car.getEquipment());
     }
+
+    @Test
+    void test_create_car_with_inherited_package_success() throws MissingModelException, MissingPackageException {
+        carFactory.addPackage("Plus", List.of("Elmanövrerade backspeglar", "Taklucka"), null);
+        carFactory.addPackage("Business", List.of("Bluetooth integration", "Backkamera"), "Plus");
+
+
+        Car car = carFactory.createNewCar("900", "Red", List.of(), List.of("Business"));
+
+        assertEquals(List.of("Business"), car.getPackages());
+        assertEquals(List.of("Bluetooth integration", "Backkamera", "Elmanövrerade backspeglar", "Taklucka"), car.getEquipment());
+
+    }
+
+
 
 }
