@@ -57,23 +57,11 @@ public class Car {
         return equipment;
     }
 
-    public void setEquipment(List<String> equipment) {
-        this.equipment = equipment;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
     public List<String> getPackages() {
         return packages;
     }
 
     public int getPrice() {
         return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
     }
 }

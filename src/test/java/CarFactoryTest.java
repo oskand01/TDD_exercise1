@@ -77,12 +77,10 @@ public class CarFactoryTest {
         carFactory.addPackage("Plus", List.of("Elmanövrerade backspeglar", "Taklucka"), null, 0);
         carFactory.addPackage("Business", List.of("Bluetooth integration", "Backkamera"), "Plus", 0);
 
-
         Car car = carFactory.createNewCar("900", "Red", List.of(), List.of("Business"));
 
         assertEquals(List.of("Business"), car.getPackages());
         assertEquals(List.of("Bluetooth integration", "Backkamera", "Elmanövrerade backspeglar", "Taklucka"), car.getEquipment());
-
     }
 
     @Test
@@ -94,7 +92,6 @@ public class CarFactoryTest {
                 carFactory.createNewCar("901", "Red", List.of(), List.of("Sport")));
 
         assertEquals("Sport", illegalModelAndPackageCombinationException.getMessage());
-
     }
 
     @Test
@@ -109,9 +106,7 @@ public class CarFactoryTest {
 
     @Test
     void test_create_car_with_price_success() throws IllegalCombinationOfEquipmentException, MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException {
-
         Car car = carFactory.createNewCar("900", "Red", List.of(), List.of());
-
 
         assertEquals(100, car.getPrice());
 
@@ -121,9 +116,7 @@ public class CarFactoryTest {
     void test_create_car_with_price_with_equipment_success() throws IllegalCombinationOfEquipmentException, MissingModelException, MissingPackageException, IllegalModelAndPackageCombinationException {
         carFactory.addEquipment("lysen", 50);
 
-
         Car car = carFactory.createNewCar("900", "Red", List.of("lysen"), List.of());
-
 
         assertEquals(150, car.getPrice());
 
@@ -136,13 +129,9 @@ public class CarFactoryTest {
         carFactory.addEquipment("Taklucka", 30);
         carFactory.addPackage("Plus", List.of("Elmanövrerade backspeglar", "Taklucka"), null, 40);
 
-
         Car car = carFactory.createNewCar("900", "Red", List.of("lysen"), List.of("Plus"));
-
 
         assertEquals(190, car.getPrice());
 
     }
-
-
 }

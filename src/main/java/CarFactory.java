@@ -19,10 +19,6 @@ public class CarFactory {
 
         model.verifyCompatiblePackages(packages);
 
-        int equipmentPrice = calculateEquipmentPrice(equipment);
-        int modelPrice = calculateEquipmentPrice(model.getEquipment());
-        int packagePrice = calculatePackagePrice(packages);
-
         return new Car(
                 color,
                 brand,
@@ -32,7 +28,15 @@ public class CarFactory {
                 model.getNumberOfPassengers(),
                 combineEquipmentAndCheckForDuplicates(equipment, packages, model),
                 packages,
-                model.getPrice() + equipmentPrice + modelPrice + packagePrice);
+                calculatePrice(equipment, packages, model));
+    }
+
+    private int calculatePrice(List<String> equipment, List<String> packages, Model model) {
+
+        return model.getPrice()
+                + calculateEquipmentPrice(equipment)
+                + calculateEquipmentPrice(model.getEquipment())
+                + calculatePackagePrice(packages);
     }
 
     private List<String> combineEquipmentAndCheckForDuplicates(List<String> equipment, List<String> packages, Model model) throws MissingPackageException, IllegalCombinationOfEquipmentException {
@@ -80,7 +84,6 @@ public class CarFactory {
             allEquipment.addAll(carPackage.getEquipment());
             if (carPackage.getInheritFromPackageName() != null) {
                 appendPackageEquipment(List.of(carPackage.getInheritFromPackageName()), allEquipment);
-
             }
         }
     }
@@ -107,17 +110,16 @@ public class CarFactory {
 
     public void addEquipment(String equipment, int price) {
         equipments.put(equipment, new Equipment(equipment, price));
-
     }
 
-    public static class Model {
+    static class Model {
         String model;
         String engineType;
         int enginePower;
         int numberOfPassengers;
-        private List<String> equipment;
-        private List<String> compatiblePackages;
-        private int price;
+        List<String> equipment;
+        List<String> compatiblePackages;
+        int price;
 
         public Model(String model,
                      String engineType,
@@ -137,10 +139,6 @@ public class CarFactory {
 
         public List<String> getEquipment() {
             return equipment;
-        }
-
-        public String getModel() {
-            return model;
         }
 
         public String getEngineType() {
@@ -170,11 +168,11 @@ public class CarFactory {
         }
     }
 
-    private static class CarPackage {
-        private String name;
-        private List<String> equipment;
-        private String inheritFromPackageName;
-        private int price;
+    static class CarPackage {
+        String name;
+        List<String> equipment;
+        String inheritFromPackageName;
+        int price;
 
         public CarPackage(String name, List<String> equipment, String inheritFromPackageName, int price) {
 
