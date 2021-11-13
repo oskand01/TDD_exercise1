@@ -10,6 +10,6 @@ public class VehicleRegistrationNumberGenerator {
     }
 
     public String getNextRegNo() {
-        return regNumbers.remove(0);
+        return regNumbers.get(0);
     }
 }

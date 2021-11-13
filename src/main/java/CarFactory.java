@@ -35,7 +35,7 @@ public class CarFactory {
                 model.getEngineType(),
                 model.getEnginePower(),
                 model.getNumberOfPassengers(),
-                allEquipment, packages);
+                allEquipment, packages,100);
     }
 
     private void appendPackageEquipment(List<String> packages, List<String> allEquipment) throws MissingPackageException {

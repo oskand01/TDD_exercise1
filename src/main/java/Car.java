@@ -10,6 +10,7 @@ public class Car {
     private int numberOfPassengers;
     private List<String> equipment;
     private List<String> packages;
+    private int price;
 
     public Car(String color,
                String brand,
@@ -18,7 +19,8 @@ public class Car {
                int enginePower,
                int numberOfPassengers,
                List<String> equipment,
-               List<String> packages) {
+               List<String> packages,
+               int price) {
 
         this.color = color;
         this.brand = brand;
@@ -28,6 +30,7 @@ public class Car {
         this.numberOfPassengers = numberOfPassengers;
         this.equipment = equipment;
         this.packages = packages;
+        this.price = price;
     }
 
     public String getColor() {
@@ -64,5 +67,13 @@ public class Car {
 
     public List<String> getPackages() {
         return packages;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 }
